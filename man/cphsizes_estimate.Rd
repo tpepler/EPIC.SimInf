@@ -10,18 +10,18 @@ Estimate CPH sizes
 Estimates number of cattle per CPH ("CPH size") from CTS movement data extracted from the EPIC server.
 }
 \usage{
-cphsizes_estimate(uid, pwd, modeldata, outfile = NULL)
+cphsizes_estimate(uid = NULL, pwd = NULL, modeldata, outfile = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{uid}{User ID for the EPIC server.}
-  \item{pwd}{Password for the EPIC server.}
+  \item{uid}{User ID for the EPIC server. If not specified in the function call, the user will be prompted to supply it.}
+  \item{pwd}{Password for the EPIC server. If not specified in the function call, the user will be prompted to supply it.}
   \item{modeldata}{A list containing the model data. Only the components labelled \code{model} and \code{startdate} are used in this function; for more details on how to specify the modeldata object, see the example at the end of this help file.}
   \item{outfile}{Name of file on local system where the output should be written to. If none is supplied, a default descriptive file name will be assigned.}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
-For the specified date, the number of cattle per CPH is estimated by counting all animals moved onto a CPH before the date, without any record indicating that they have been moved off of the CPH before the date. Oly CTS movement records where \code{is_valid_history = 't'} are included in this calculation.
+For the specified date, the number of cattle per CPH is estimated by counting all animals moved onto a CPH before the date, without any record indicating that they have been moved off of the CPH before the date. Only CTS movement records where \code{is_valid_history = 't'} are included in this calculation.
 
 CPH size estimates are returned for all CPHs (in England, Wales and Scotland) for which the estimates are non-zero.
 
@@ -63,7 +63,7 @@ The saved output file can be used in the \code{\link{cts_prep}} function without
 # modeldata1$startdate <- '2012/01/01'
 
 ## Estimate CPH sizes
-# cphsizes(uid = 'MyUserID', pwd = 'MyPassword', modeldata = modeldata1)
+# cphsizes(modeldata = modeldata1)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

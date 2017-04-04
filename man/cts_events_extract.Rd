@@ -10,12 +10,12 @@ Extract CTS events data
 Extracts CTS movement records from the EPIC server, and organises it in the format required for the specified SimInf model.
 }
 \usage{
-cts_events_extract(uid, pwd, modeldata, outfile = NULL)
+cts_events_extract(uid = NULL, pwd = NULL, modeldata, outfile = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{uid}{User ID for the EPIC server.}
-  \item{pwd}{Password for the EPIC server.}
+  \item{uid}{User ID for the EPIC server. If not specified in the function call, the user will be prompted to supply it.}
+  \item{pwd}{Password for the EPIC server. If not specified in the function call, the user will be prompted to supply it.}
   \item{modeldata}{A list containing the model data. The components labelled \code{model}, \code{startdate} and \code{enddate} are used in this function; for more details on how to specify the modeldata object, see the example at the end of this help file.}
   \item{outfile}{Name of file on local system where the output should be written to. If none is supplied, a default descriptive file name will be assigned.}
 }
@@ -64,7 +64,7 @@ Currently only formatting for the SIR model is implemented.
 # modeldata1$enddate <- '2012/03/31'
 
 ## Extract CTS events data
-# cts_events_extract(uid = 'MyUserID', pwd = 'MyPassword', modeldata = modeldata1)
+# cts_events_extract(modeldata = modeldata1)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

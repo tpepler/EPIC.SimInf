@@ -1,8 +1,8 @@
 #********************************************************************
 # Function to extract and prepare CTS data for SimInf modelling
 
-cts_prep <- function(uid,
-                     pwd,
+cts_prep <- function(uid = NULL,
+                     pwd = NULL,
                      startdate,
                      enddate,
                      model = c('SIR'),
@@ -13,6 +13,16 @@ cts_prep <- function(uid,
   # Temporary error message
   if(model != 'SIR'){
     stop('Error: Only SIR model currently implemented.')
+  }
+
+  # Obtain EPIC username and password, if necessary to extract data from the EPIC server
+  if(is.null(initdata_file) | is.null(events_file)){
+    if(is.null(uid)){
+      uid <- readline(prompt = "EPIC user ID: ")
+    }
+    if(is.null(pwd)){
+      pwd <- readline(prompt = "EPIC password: ")
+    }
   }
 
   # Initialise model object

@@ -1,14 +1,22 @@
 #********************************************************************
 # Function to extract CTS movement data from EPIC server
 
-cts_events_extract <- function(uid,
-                               pwd,
+cts_events_extract <- function(uid = NULL,
+                               pwd = NULL,
                                modeldata,
                                #startdate = '2012/01/01',
                                #enddate = '2012/01/07',
                                outfile = NULL){
 
   #require(RPostgreSQL)
+
+  # Obtain EPIC username and password, if not yet specified
+  if(is.null(uid)){
+    uid <- readline(prompt = "EPIC user ID: ")
+  }
+  if(is.null(pwd)){
+    pwd <- readline(prompt = "EPIC password: ")
+  }
 
   # Create outfile name if missing
   if(is.null(outfile)){

@@ -10,12 +10,12 @@ Prepare CTS data for modelling with SimInf
 Reads in and prepares CTS data for modelling with the SimInf simulation framework.
 }
 \usage{
-cts_prep(uid, pwd, startdate, enddate, model = c("SIR"), cphsizes_file = NULL, initdata_file = NULL, events_file = NULL)
+cts_prep(uid = NULL, pwd = NULL, startdate, enddate, model = c("SIR"), cphsizes_file = NULL, initdata_file = NULL, events_file = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{uid}{User ID for the EPIC server.}
-  \item{pwd}{Password for the EPIC server.}
+  \item{uid}{User ID for the EPIC server. If not specified in the function call, the user may be prompted to supply it if required.}
+  \item{pwd}{Password for the EPIC server. If not specified in the function call, the user may be prompted to supply it if required.}
   \item{startdate}{Date for the start of the simulation model; specify in the format \code{'YYYY/MM/DD'}.}
   \item{enddate}{Date for the end of the simulation model; specify in the format \code{'YYYY/MM/DD'}.}
   \item{model}{Compartmental model type; currently only \code{'SIR'} is implemented.}
@@ -26,6 +26,8 @@ cts_prep(uid, pwd, startdate, enddate, model = c("SIR"), cphsizes_file = NULL, i
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 Initialisation and events data can be imported from files on the local file system, or extracted directly from the EPIC server. However, data extraction from the EPIC server takes considerably longer.
+
+If data extraction from the EPIC server is necessary (in the case where either \code{initdata_file} and/or \code{events_file} are NULL), the user will be prompted to supply their user ID and password to access the EPIC server.
 }
 \value{
 %%  ~Describe the value returned
@@ -62,7 +64,7 @@ Currently data preparation procedures are implemented for only the SIR model.
 ## -- EXAMPLE NOT RUN --
 
 ## Extract and prepare CTS data from the EPIC server
-# cts_prep(uid = 'MyUserID', pwd = 'MyPassword', startdate = '2012/01/01', enddate = '2012/03/31', model = 'SIR')
+# cts_prep(startdate = '2012/01/01', enddate = '2012/03/31', model = 'SIR')
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
