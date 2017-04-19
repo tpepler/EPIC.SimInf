@@ -10,11 +10,14 @@ cphsizes_estimate <- function(uid = NULL,
   #require(RPostgreSQL)
 
   # Obtain EPIC username and password, if not yet specified
-  if(is.null(uid)){
-    uid <- readline(prompt = "EPIC user ID: ")
-  }
-  if(is.null(pwd)){
-    pwd <- readline(prompt = "EPIC password: ")
+  if(is.null(uid) | is.null(pwd)){
+  #   uid <- readline(prompt = "EPIC user ID: ")
+  # }
+  # if(is.null(pwd)){
+  #   pwd <- readline(prompt = "EPIC password: ")
+    credentials <- getLoginDetails()
+    uid <- credentials[names(credentials) == 'uid']
+    pwd <- credentials[names(credentials) == 'pwd']
   }
 
   # Create outfile name if missing
