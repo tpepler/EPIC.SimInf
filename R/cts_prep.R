@@ -16,16 +16,25 @@ cts_prep <- function(uid = NULL,
   }
 
   # Obtain EPIC username and password, if necessary to extract data from the EPIC server
-  if(is.null(initdata_file) | is.null(events_file)){
+  #if(is.null(initdata_file) | is.null(events_file)){
     # if(is.null(uid)){
     #   uid <- readline(prompt = "EPIC user ID: ")
     # }
     # if(is.null(pwd)){
     #   pwd <- readline(prompt = "EPIC password: ")
     # }
-    credentials <- getLoginDetails()
-    uid <- credentials[names(credentials) == 'uid']
-    pwd <- credentials[names(credentials) == 'pwd']
+  #   credentials <- getLoginDetails()
+  #   uid <- credentials[names(credentials) == 'uid']
+  #   pwd <- credentials[names(credentials) == 'pwd']
+  # }
+  if(is.null(uid) | is.null(pwd)){
+    cat('Please supply your login details to extract data from the EPIC server.\n')
+  }
+  if(is.null(uid)){
+    uid <- getPass('Username:')
+  }
+  if(is.null(pwd)){
+    pwd <- getPass('Password:')
   }
 
   # Initialise model object
