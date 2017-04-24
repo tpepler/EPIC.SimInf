@@ -1,12 +1,12 @@
 #********************************************************************
-# Function to extract CTS movement data from EPIC server
+# Function to extract CTS movement data (events) from EPIC server
 
-cts_events_extract <- function(uid = NULL,
-                               pwd = NULL,
-                               modeldata,
+extract_cts_events <- function(uid = NULL,
+                               pwd = NULL
+                               #modeldata,
                                #startdate = '2012/01/01',
                                #enddate = '2012/01/07',
-                               outfile = NULL){
+                               ){
 
   #require(RPostgreSQL)
 
@@ -21,25 +21,18 @@ cts_events_extract <- function(uid = NULL,
   #   pwd <- credentials[names(credentials) == 'pwd']
   # }
   if(is.null(uid) | is.null(pwd)){
-    cat('Please supply your login details to extract data from the EPIC server.\n')
-  }
-  if(is.null(uid)){
-    uid <- getPass('Username:')
-  }
-  if(is.null(pwd)){
-    pwd <- getPass('Password:')
-  }
-
-  # Create outfile name if missing
-  if(is.null(outfile)){
-    outfile <- paste('siminf_', modeldata$model, '_events_',
-                     str_sub(modeldata$startdate, start = 1, end = 4), '-',
-                     str_sub(modeldata$startdate, start = 6, end = 7), '-',
-                     str_sub(modeldata$startdate, start = 9, end = 10), '_',
-                     str_sub(modeldata$enddate, start = 1, end = 4), '-',
-                     str_sub(modeldata$enddate, start = 6, end = 7), '-',
-                     str_sub(modeldata$enddate, start = 9, end = 10), '.csv',
-                     sep = '')
+    if(Sys.info()['sysname'] != 'Linux'){
+      stop('EPIC.SimInf cannot currently extract data from the EPIC server under OSX or Windows systems. Please extract data using your preferred SQL software, and import to R.')
+    }
+    else{
+      cat('Please supply your login details to extract data from the EPIC server.\n')
+    }
+    if(is.null(uid)){
+      uid <- getPass('Username:')
+    }
+    if(is.null(pwd)){
+      pwd <- getPass('Password:')
+    }
   }
 
   cat('Extracting CTS data from EPIC server... ')
@@ -92,9 +85,35 @@ cts_events_extract <- function(uid = NULL,
   # Close connection to EPIC server
   dbDisconnect(epicserver)
 
-  # - - - - - - - - - -
+  return(eventdata)
+}
+
+#********************************************************************
+# Function to tidy CTS movement data (events)
+
+tidy_cts_events <- function(eventdata = NULL,
+                            events_file = NULL,
+                            outfile = NULL){
+
   # Tidy extracted CTS events data
   cat('Tidying events data... ')
+
+  # Create outfile name if missing
+  if(is.null(outfile)){
+    outfile <- paste('siminf_', modeldata$model, '_events_',
+                     str_sub(modeldata$startdate, start = 1, end = 4), '-',
+                     str_sub(modeldata$startdate, start = 6, end = 7), '-',
+                     str_sub(modeldata$startdate, start = 9, end = 10), '_',
+                     str_sub(modeldata$enddate, start = 1, end = 4), '-',
+                     str_sub(modeldata$enddate, start = 6, end = 7), '-',
+                     str_sub(modeldata$enddate, start = 9, end = 10), '.csv',
+                     sep = '')
+  }
+
+  # Print error message if neither events data nor valid file specified
+  if(is.null(eventdata) | is.null(events_file)){
+    stop('An events data frame or file should be specified.')
+  }
 
   # Remove last (row count) row, if applicable
   if(is.na(eventdata$animals[nrow(eventdata)])){

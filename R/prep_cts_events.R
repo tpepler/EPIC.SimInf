@@ -1,7 +1,7 @@
 #********************************************************************
-# Function to pre-process events data
+# Function to pre-process CTS movement data (events)
 
-.events_prep <- function(modeldata){
+prep_cts_events <- function(modeldata){
   # modeldata: list with initialisation and events data, and the model type
 
   if(modeldata$model != 'SIR'){
@@ -12,10 +12,10 @@
     # Ensure select column has correct values for SIR model
     modeldata$eventdata <- .events2SIR(eventdata = modeldata$eventdata)
   }
-  
+
   # Process events of type 1 (entries) on previous day
   modeldata$eventsdata$time[modeldata$eventsdata$event == 1 & modeldata$eventsdata$time > 1] <- modeldata$eventsdata$time[modeldata$eventsdata$event == 1 & modeldata$eventsdata$time > 1] - 1
-  
+
   # Ensure 'node' and 'dest' columns in event data refer to rows of initialisation data
   #require(plyr)
   lookuptab <- data.frame(location_id = c(0, as.numeric(rownames(modeldata$initdata))),
@@ -26,9 +26,9 @@
   events_dest <- data.frame(location_id = modeldata$eventdata$dest)
   temp <- plyr::join(x = events_dest, y = lookuptab, by = c('location_id'), type = 'left', match = 'first')
   modeldata$eventdata$dest <- temp$node_num
-  
+
   cat('done\n')
-  
+
   return(modeldata)
 }
 
