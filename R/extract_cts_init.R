@@ -1,11 +1,12 @@
 #********************************************************************
 # Function to extract CTS data to calculate CPH sizes at start of simulation
 
-cphsizes_estimate <- function(uid = NULL,
+#cphsizes_estimate <- function(uid = NULL,
+extract_cts_init <- function(uid = NULL,
                               pwd = NULL,
-                              modeldata,
+                              modeldata
                               #startdate = '2012/01/01',
-                              outfile = NULL){
+                              ){
 
   #require(RPostgreSQL)
 
@@ -20,22 +21,18 @@ cphsizes_estimate <- function(uid = NULL,
     # pwd <- credentials[names(credentials) == 'pwd']
   #}
   if(is.null(uid) | is.null(pwd)){
-    cat('Please supply your login details to extract data from the EPIC server.\n')
-  }
-  if(is.null(uid)){
-    uid <- getPass('Username:')
-  }
-  if(is.null(pwd)){
-    pwd <- getPass('Password:')
-  }
-
-  # Create outfile name if missing
-  if(is.null(outfile)){
-    outfile <- paste('siminf_', modeldata$model, '_cphsizes_',
-                     str_sub(modeldata$startdate, start = 1, end = 4), '-',
-                     str_sub(modeldata$startdate, start = 6, end = 7), '-',
-                     str_sub(modeldata$startdate, start = 9, end = 10), '.csv',
-                     sep = '')
+    if(Sys.info()['sysname'] != 'Linux'){
+      stop('EPIC.SimInf cannot currently extract data from the EPIC server under OSX or Windows systems. Please extract data using your preferred SQL software, and import to R.')
+    }
+    else{
+      cat('Please supply your login details to extract data from the EPIC server.\n')
+      }
+    if(is.null(uid)){
+      uid <- getPass('Username:')
+    }
+    if(is.null(pwd)){
+      pwd <- getPass('Password:')
+    }
   }
 
   cat('Extracting CPH size data from EPIC server (this may take a while)... ')
@@ -121,23 +118,13 @@ cphsizes_estimate <- function(uid = NULL,
                                         cattle_per_cph.cph", sep = ''))
 
   # Run SQL query on EPIC server
-  cphdata <- dbFetch(rs, n = Inf)
+  modeldata$init <- dbFetch(rs, n = Inf)
   cat('done\n')
 
   # Close connection to EPIC server
   dbDisconnect(epicserver)
 
-  # Tidy extracted CPH size data
-  cat('Tidying CPH size data... ')
-  ind <- !is.na(cphdata$location_id)
-  cphsizes <- cphdata[ind, ] # remove rows without a location ID
-  cat('done\n')
-
-  # Save tidied CPH size data to file on local system
-  write.csv(cphsizes, file = outfile, row.names = F, quote = F)
-
-  return(cphsizes)
+  return(modeldata)
 }
 
 #********************************************************************
-

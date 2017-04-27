@@ -2,11 +2,11 @@
 # Function to extract CTS movement data (events) from EPIC server
 
 extract_cts_events <- function(uid = NULL,
-                               pwd = NULL
-                               #modeldata,
+                               pwd = NULL,
+                               modeldata
                                #startdate = '2012/01/01',
                                #enddate = '2012/01/07',
-){
+                               ){
 
   #require(RPostgreSQL)
 
@@ -79,13 +79,13 @@ extract_cts_events <- function(uid = NULL,
                                       animal_movements.movement_date", sep = ''))
 
   # Run SQL query on EPIC server
-  eventdata <- dbFetch(rs, n = Inf)
+  modeldata$events <- dbFetch(rs, n = Inf)
   cat('done\n')
 
   # Close connection to EPIC server
   dbDisconnect(epicserver)
 
-  return(eventdata)
+  return(modeldata)
 }
 
 #********************************************************************

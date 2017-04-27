@@ -1,29 +1,37 @@
 #********************************************************************
 # Function to tidy CTS movement data (events)
 
-tidy_cts_events <- function(eventdata = NULL,
-                            events_file = NULL,
-                            outfile = NULL){
+tidy_cts_events <- function(modeldata,
+                            events_file = NULL
+                            #outfile = NULL
+                            ){
+
+  # Check if events data already tidied?
+  if(modeldata$stepslog['tidy_cts_events'] == TRUE){
+    stop('The CTS events data are already tidied!')
+  }
 
   # Tidy extracted CTS events data
   cat('Tidying events data... ')
 
-  # Create outfile name if missing
-  if(is.null(outfile)){
-    outfile <- paste('siminf_', modeldata$model, '_events_',
-                     str_sub(modeldata$startdate, start = 1, end = 4), '-',
-                     str_sub(modeldata$startdate, start = 6, end = 7), '-',
-                     str_sub(modeldata$startdate, start = 9, end = 10), '_',
-                     str_sub(modeldata$enddate, start = 1, end = 4), '-',
-                     str_sub(modeldata$enddate, start = 6, end = 7), '-',
-                     str_sub(modeldata$enddate, start = 9, end = 10), '.csv',
-                     sep = '')
-  }
+  # # Create outfile name if missing
+  # if(is.null(outfile)){
+  #   outfile <- paste('siminf_', modeldata$model, '_events_',
+  #                    str_sub(modeldata$startdate, start = 1, end = 4), '-',
+  #                    str_sub(modeldata$startdate, start = 6, end = 7), '-',
+  #                    str_sub(modeldata$startdate, start = 9, end = 10), '_',
+  #                    str_sub(modeldata$enddate, start = 1, end = 4), '-',
+  #                    str_sub(modeldata$enddate, start = 6, end = 7), '-',
+  #                    str_sub(modeldata$enddate, start = 9, end = 10), '.csv',
+  #                    sep = '')
+  # }
 
   # Print error message if neither events data nor valid file specified
-  if(is.null(eventdata) | is.null(events_file)){
+  if(is.null(modeldata$eventdata) & is.null(events_file)){
     stop('An events data frame or file should be specified.')
   }
+
+  eventdata <- modeldata$events
 
   # Remove last (row count) row, if applicable
   if(is.na(eventdata$animals[nrow(eventdata)])){
@@ -65,12 +73,16 @@ tidy_cts_events <- function(eventdata = NULL,
   # Select only applicable columns
   eventdata <- eventdata[, c('event', 'time', 'node', 'dest', 'n', 'proportion', 'select', 'shift')]
 
-  # Save tidied CTS events data to file on local system
-  write.csv(eventdata, file = outfile, row.names = F, quote = F)
+  # # Save tidied CTS events data to file on local system
+  # write.csv(eventdata, file = outfile, row.names = F, quote = F)
+
+  # Update modeldata
+  modeldata$events <- eventdata
+  modeldata$stepslog['tidy_cts_events'] <- TRUE
 
   cat('done\n') # done tidying events
 
-  return(eventdata)
+  return(modeldata)
 }
 
 #********************************************************************

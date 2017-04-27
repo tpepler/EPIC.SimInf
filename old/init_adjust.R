@@ -1,8 +1,10 @@
 #********************************************************************
 # Function to adjust initialisation data for specified events
 
-.init_adjust <- function(modeldata,
-                        outfile = NULL){
+#.init_adjust <- function(modeldata,
+prep_cts_init <- function(modeldata
+                        #outfile = NULL
+                        ){
 
   # Create outfile name if missing
   if(is.null(outfile)){
