@@ -42,65 +42,66 @@ prep_cts_init <- function(modeldata
 
   (mintime <- min(eventdata$time))
   (maxtime <- max(eventdata$time))
-  starttime <- Sys.time()
-  starttime_global <- starttime
-  #for(d in mintime:maxtime){
+  #starttime <- Sys.time()
+  #starttime_global <- starttime
+  timeseq <- seq(from = mintime, to = maxtime, by = 1)
   day_u0 <- initdata
-  for(d in mintime:maxtime){
+  for(dcount in 1:length(timeseq)){
+    d <- timeseq[dcount]
     day_events <- subset(eventdata, time == d)
     n_events <- nrow(day_events)
     checkpoints_1000 <- c(0, seq(from = 1000, to = n_events, by = 1000), n_events)
     #checkpoints_1000 <- c(seq(from = 1740000, to = n_events, by = 1000), n_events) # optional: to start from previous data
     for(i in 2:(length(checkpoints_1000))){
-      model <- SIR(u0 = day_u0,
+      model <- SimInf::SIR(u0 = day_u0,
                    events = day_events[1:checkpoints_1000[i], ],
-                   tspan = seq(from = d, #mintime,
-                               to = d + 1, #maxtime,
-                               by = 1),
+                   tspan = c(d, d + 1), #seq(from = d, #mintime,
+                               #to = d + 1, #maxtime,
+                               #by = 1),
                    beta = 0,
                    gamma = 0)
-      cc <- try(run(model), silent = TRUE)
+      cc <- try(SimInf::run(model), silent = TRUE)
       if(is(cc,"try-error")){
         checkpoints_100 <- seq(from = checkpoints_1000[i - 1], to = checkpoints_1000[i], by = 100)
         if(checkpoints_100[length(checkpoints_100)] != checkpoints_1000[i]){
           checkpoints_100 <- c(checkpoints_100, checkpoints_1000[i])
         }
         for(j in 2:(length(checkpoints_100))){
-          model <- SIR(u0 = day_u0,
+          model <- SimInf::SIR(u0 = day_u0,
                        events = day_events[1:checkpoints_100[j], ],
-                       tspan = seq(from = d, #mintime,
-                                   to = d + 1, #maxtime,
-                                   by = 1),
+                       tspan = c(d, d + 1), #seq(from = d, #mintime,
+                                   #to = d + 1, #maxtime,
+                                   #by = 1),
                        beta = 0,
                        gamma = 0)
-          cc <- try(run(model), silent = TRUE)
+          cc <- try(SimInf::run(model), silent = TRUE)
           if(is(cc,"try-error")){
             checkpoints_10 <- seq(from = checkpoints_100[j - 1], to = checkpoints_100[j], by = 10)
             if(checkpoints_10[length(checkpoints_10)] != checkpoints_100[j]){
               checkpoints_10 <- c(checkpoints_10, checkpoints_100[j])
             }
             for(k in 2:(length(checkpoints_10))){
-              model <- SIR(u0 = day_u0,
+              model <- SimInf::SIR(u0 = day_u0,
                            events = day_events[1:checkpoints_10[k], ],
-                           tspan = seq(from = d, #mintime,
-                                       to = d + 1, #maxtime,
-                                       by = 1),
+                           tspan = c(d, d + 1), #seq(from = d, #mintime,
+                                       #to = d + 1, #maxtime,
+                                       #by = 1),
                            beta = 0,
                            gamma = 0)
-              cc <- try(run(model), silent = TRUE)
+              cc <- try(SimInf::run(model), silent = TRUE)
               if(is(cc,"try-error")){
                 checkpoints_1 <- seq(from = checkpoints_10[k - 1], to = checkpoints_10[k], by = 1)
                 for(h in 2:(length(checkpoints_1))){
-                  model <- SIR(u0 = day_u0,
+                  model <- SimInf::SIR(u0 = day_u0,
                                events = day_events[1:checkpoints_1[h], ],
-                               tspan = seq(from = d, #mintime,
-                                           to = d + 1, #maxtime,
-                                           by = 1),
+                               tspan = c(d, d + 1), #seq(from = d, #mintime,
+                                           #to = d + 1, #maxtime,
+                                           #by = 1),
                                beta = 0,
                                gamma = 0)
-                  cc <- try(run(model), silent = TRUE)
+                  cc <- try(SimInf::run(model), silent = TRUE)
                   if(is(cc,"try-error")){
-                    print(day_events[checkpoints_1[h], ])
+                    #print(day_events[checkpoints_1[h], ])
                     initdata$S[day_events$node[checkpoints_1[h]]] <- initdata$S[day_events$node[checkpoints_1[h]]] + day_events$n[checkpoints_1[h]]
                     day_u0$S[day_events$node[checkpoints_1[h]]] <- day_u0$S[day_events$node[checkpoints_1[h]]] + day_events$n[checkpoints_1[h]]
                   }
@@ -110,22 +111,22 @@ prep_cts_init <- function(modeldata
           }
         }
       }
-      cat(paste(checkpoints_1000[i], ': ', Sys.time() - starttime, '\n', sep = ''))
-      starttime <- Sys.time()
+      #cat(paste(checkpoints_1000[i], ': ', Sys.time() - starttime, '\n', sep = ''))
+      #starttime <- Sys.time()
     }
     # Run final model for the current day and adjust day_u0
-    model <- SIR(u0 = day_u0,
+    model <- SimInf::SIR(u0 = day_u0,
                  events = day_events,
-                 tspan = seq(from = d, #mintime,
-                             to = d + 1, #maxtime,
-                             by = 1),
+                 tspan = c(d, d + 1), #seq(from = d, #mintime,
+                             #to = d + 1, #maxtime,
+                             #by = 1),
                  beta = 0,
                  gamma = 0)
-    day_u0$S <- susceptible(run(model))[, 2]
+    day_u0$S <- SimInf::susceptible(SimInf::run(model))[, 2]
   }
-  cat(paste('Overall time:', Sys.time() - starttime_global, '\n', sep = ''))
+  #cat(paste('Overall time:', Sys.time() - starttime_global, '\n', sep = ''))
 
-  #cat('done\n')
+  cat('done\n')
 
   # Update modeldata object
   modeldata$init <- initdata

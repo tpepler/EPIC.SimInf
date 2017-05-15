@@ -8,6 +8,8 @@ tidy_cts_init <- function(modeldata,
                         #outfile = NULL
                         ){
 
+  require(stringr)
+
   # Check if init data already tidied?
   if(modeldata$stepslog['tidy_cts_init'] == TRUE){
     stop('The CTS initialisation data are already tidied!')
@@ -19,13 +21,18 @@ tidy_cts_init <- function(modeldata,
   }
 
   # Print error message if neither init data nor valid file specified
-  if(is.null(modeldata$initdata) & is.null(init_file)){
+  if(is.null(modeldata$init) & is.null(init_file)){
     stop('An initialisation data frame or file should be specified.')
   }
 
   cat('Tidying CPH initialisation data... ')
 
-  initdata <- modeldata$init
+  if(!is.null(modeldata$init)){
+    initdata <- modeldata$init
+  } else {
+    initdata <- read.csv(init_file)
+  }
+
   eventdata <- modeldata$events
 
   # # Create outfile name if missing
@@ -37,8 +44,14 @@ tidy_cts_init <- function(modeldata,
   #                    sep = '')
   # }
 
+  # Remove last (row count) row, if applicable
+  if(is.na(initdata$num_cattle[nrow(initdata)])){
+    initdata <- initdata[-c(nrow(initdata)), ]
+  }
+
   # Remove rows without a location ID
-  ind <- !is.na(initdata$location_id)
+  #ind <- !is.na(initdata$location_id)
+  ind <- stringr::str_length(initdata$location_id) > 0
   initdata <- initdata[ind, ]
 
   if(modeldata$model != 'SIR'){

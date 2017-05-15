@@ -11,9 +11,6 @@ tidy_cts_events <- function(modeldata,
     stop('The CTS events data are already tidied!')
   }
 
-  # Tidy extracted CTS events data
-  cat('Tidying events data... ')
-
   # # Create outfile name if missing
   # if(is.null(outfile)){
   #   outfile <- paste('siminf_', modeldata$model, '_events_',
@@ -27,11 +24,18 @@ tidy_cts_events <- function(modeldata,
   # }
 
   # Print error message if neither events data nor valid file specified
-  if(is.null(modeldata$eventdata) & is.null(events_file)){
+  if(is.null(modeldata$events) & is.null(events_file)){
     stop('An events data frame or file should be specified.')
   }
 
-  eventdata <- modeldata$events
+  # Tidy extracted CTS events data
+  cat('Tidying events data... ')
+
+  if(!is.null(modeldata$events)){
+    eventdata <- modeldata$events
+  } else {
+    eventdata <- read.csv(events_file)
+  }
 
   # Remove last (row count) row, if applicable
   if(is.na(eventdata$animals[nrow(eventdata)])){
@@ -39,8 +43,9 @@ tidy_cts_events <- function(modeldata,
   }
 
   # Format time column
-  startdate <- as.numeric(min(as.Date(eventdata$movement_date))) - 1
-  eventdata$time <- as.numeric(as.Date(eventdata$movement_date)) - startdate
+  #startdate <- as.numeric(min(as.Date(eventdata$movement_date))) - 1
+  #eventdata$time <- as.numeric(as.Date(eventdata$movement_date)) - startdate
+  eventdata$time <- as.Date(eventdata$movement_date)
 
   # Format event column
   eventdata$event <- rep(NA, times = nrow(eventdata))

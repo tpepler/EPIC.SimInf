@@ -35,7 +35,8 @@ prep_cts_events <- function(modeldata){
   }
 
   # Process events of type 1 (entries) on previous day
-  eventdata$time[eventdata$event == 1 & eventdata$time > 1] <- eventdata$time[eventdata$event == 1 & eventdata$time > 1] - 1
+  firstday <- min(eventdata$time)
+  eventdata$time[eventdata$event == 1 & eventdata$time > firstday] <- eventdata$time[eventdata$event == 1 & eventdata$time > firstday] - 1
 
   # Ensure 'node' and 'dest' columns in event data refer to rows of initialisation data
   #require(plyr)
