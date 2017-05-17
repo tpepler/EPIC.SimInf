@@ -75,6 +75,7 @@ extract_cts_init <- function(uid = NULL,
                                             FROM cts201404.movements
                                             WHERE (movement_date < '", modeldata$startdate, "')
                                               AND is_valid_history = 't'
+                                              AND is_trans = 'f'
                                             ) AS move_on
                                             --****************************************************************
 
@@ -88,6 +89,7 @@ extract_cts_init <- function(uid = NULL,
                                               movement_date
                                             FROM cts201404.movements
                                             WHERE is_valid_history = 't'
+                                              AND is_trans = 'f'
                                             ) AS move_off
                                             --****************************************************************
 
