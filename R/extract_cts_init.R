@@ -35,6 +35,12 @@ extract_cts_init <- function(uid = NULL,
     }
   }
 
+  # Check if RPostgreSQL is available
+  if (!requireNamespace('RPostgreSQL', quietly = TRUE)) {
+    stop("RPostgreSQL is needed for this function to work. Please install it using install.packages('RPostgreSQL').",
+         call. = FALSE)
+  }
+
   cat('Extracting CPH size data from EPIC server (this may take a while)... ')
 
   # Set up PostgreSQL connection to EPIC server

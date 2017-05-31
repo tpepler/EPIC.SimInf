@@ -1,12 +1,13 @@
 Package: EPIC.SimInf
 Type: Package
 Title: EPIC Package for Epidemiological Simulation Modelling using SimInf
-Version: 0.1.6
-Date: 2017-05-17
+Version: 0.1.7
+Date: 2017-05-31
 Author: Theo Pepler
 Maintainer: Theo Pepler <theo.pepler@glasgow.ac.uk>
 Description: Extract and tidy data from the EPIC server, to be used for epidemiological simulation modelling with the SimInf R package. This package was developed for use by members of the Scottish Government's Centre of Expertise on Animal Disease Outbreaks (EPIC).
-Imports: getPass, plyr, RPostgreSQL, SimInf, stringr
+Imports: getPass, plyr, SimInf, stringr
+Suggests: RPostgreSQL
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
