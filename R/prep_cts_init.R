@@ -50,7 +50,14 @@ prep_cts_init <- function(modeldata
     d <- timeseq[dcount]
     day_events <- subset(eventdata, time == d)
     n_events <- nrow(day_events)
-    checkpoints_1000 <- c(0, seq(from = 1000, to = n_events, by = 1000), n_events)
+    #print(n_events) # debugging
+    if(n_events > 1000){
+      checkpoints_1000 <- c(0, seq(from = 1000, to = n_events, by = 1000), n_events)
+    }
+    else {
+      checkpoints_1000 <- c(0, n_events)
+    }
+    #print(checkpoints_1000) # debugging
     #checkpoints_1000 <- c(seq(from = 1740000, to = n_events, by = 1000), n_events) # optional: to start from previous data
     for(i in 2:(length(checkpoints_1000))){
       model <- SimInf::SIR(u0 = day_u0,
