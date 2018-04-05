@@ -47,6 +47,7 @@ prep_cts_init <- function(modeldata
   timeseq <- seq(from = mintime, to = maxtime, by = 1)
   day_u0 <- initdata
   for(dcount in 1:length(timeseq)){
+    #print(dcount) # debugging
     d <- timeseq[dcount]
     day_events <- subset(eventdata, time == d)
     n_events <- nrow(day_events)
@@ -129,7 +130,17 @@ prep_cts_init <- function(modeldata
                              #by = 1),
                  beta = 0,
                  gamma = 0)
-    day_u0$S <- SimInf::susceptible(SimInf::run(model))[, 2]
+    #day_u0$S <- SimInf::susceptible(SimInf::run(model))[, 2] # Note: old code; stopped working when 'susceptible' function was replaced by 'trajectory' in SimInf package
+    result <- SimInf::trajectory(model = SimInf::run(model),
+                                 compartments = 'S',
+                                 i = NULL)
+    day_u0$S <- result$S[result$time == d + 1]
+    #print(dim(tempout)) # debugging
+    #print(head(tempout)) # debugging
+    #return(tempout) # debugging
+    #day_u0$S <- SimInf::trajectory(model = SimInf::run(model),
+    #                               compartments = 'S',
+    #                               i = NULL)[, 2]
   }
   #cat(paste('Overall time:', Sys.time() - starttime_global, '\n', sep = ''))
 
