@@ -49,19 +49,19 @@ tidy_cts_events <- function(modeldata,
 
   # Format event column
   eventdata$event <- rep(NA, times = nrow(eventdata))
-  eventdata$event[!is.na(eventdata$off_location_id) & is.na(eventdata$on_location_id)] <- 0 # exit (deaths)
-  eventdata$event[is.na(eventdata$off_location_id) & !is.na(eventdata$on_location_id)] <- 1 # enter (births)
-  eventdata$event[!is.na(eventdata$off_location_id) & !is.na(eventdata$on_location_id)] <- 3 # transfers between locations
+  eventdata$event[!is.na(eventdata$off_location_id) & is.na(eventdata$on_location_id)] <- 'exit' # exit (deaths)
+  eventdata$event[is.na(eventdata$off_location_id) & !is.na(eventdata$on_location_id)] <- 'enter' # enter (births)
+  eventdata$event[!is.na(eventdata$off_location_id) & !is.na(eventdata$on_location_id)] <- 'extTrans' # transfers between locations
 
   # Format node column
   eventdata$node <- rep(NA, times = nrow(eventdata))
-  eventdata$node[eventdata$event == 0] <- eventdata$off_location_id[eventdata$event == 0] # exit (deaths)
-  eventdata$node[eventdata$event == 1] <- eventdata$on_location_id[eventdata$event == 1] # enter (births)
-  eventdata$node[eventdata$event == 3] <- eventdata$off_location_id[eventdata$event == 3] # transfers between locations
+  eventdata$node[eventdata$event == 'exit'] <- eventdata$off_location_id[eventdata$event == 'exit'] # exit (deaths)
+  eventdata$node[eventdata$event == 'enter'] <- eventdata$on_location_id[eventdata$event == 'enter'] # enter (births)
+  eventdata$node[eventdata$event == 'extTrans'] <- eventdata$off_location_id[eventdata$event == 'extTrans'] # transfers between locations
 
   # Format dest column
   eventdata$dest <- rep(0, times = nrow(eventdata))
-  eventdata$dest[eventdata$event == 3] <- eventdata$on_location_id[eventdata$event == 3] # transfers between locations
+  eventdata$dest[eventdata$event == 'extTrans'] <- eventdata$on_location_id[eventdata$event == 'extTrans'] # transfers between locations
 
   # Format n column
   eventdata$n <- eventdata$animals
@@ -73,7 +73,8 @@ tidy_cts_events <- function(modeldata,
   eventdata$shift <- rep(0, times = nrow(eventdata))
 
   # Format select column
-  eventdata$select <- rep(2, times = nrow(eventdata))
+  eventdata$select <- rep(4, times = nrow(eventdata)) # 4 = select from any of S, I, or R animals
+  eventdata$select[eventdata$event == 'enter'] <- 1 # 1 = only S animals (i.e. all births/entries go to susceptible category)
 
   # Select only applicable columns
   eventdata <- eventdata[, c('event', 'time', 'node', 'dest', 'n', 'proportion', 'select', 'shift')]

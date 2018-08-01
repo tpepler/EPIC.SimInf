@@ -28,15 +28,15 @@ prep_cts_events <- function(modeldata){
   else{
     cat('Preparing events data for modelling... ')
     # Ensure select column has correct values for SIR model
-    eventdata$select[eventdata$event == 0] <- 2
-    eventdata$select[eventdata$event == 1] <- 1
-    eventdata <- eventdata[eventdata$event != 2, ]
-    eventdata$select[eventdata$event == 3] <- 2
+    eventdata$select[eventdata$event == 'exit'] <- 4
+    eventdata$select[eventdata$event == 'enter'] <- 1
+    #eventdata <- eventdata[eventdata$event != 2, ]
+    eventdata$select[eventdata$event == 'extTrans'] <- 4
   }
 
-  # Process events of type 1 (entries) on previous day
+  # Process entry events on previous day
   firstday <- min(eventdata$time)
-  eventdata$time[eventdata$event == 1 & eventdata$time > firstday] <- eventdata$time[eventdata$event == 1 & eventdata$time > firstday] - 1
+  eventdata$time[eventdata$event == 'enter' & eventdata$time > firstday] <- eventdata$time[eventdata$event == 'enter' & eventdata$time > firstday] - 1
 
   # Ensure 'node' and 'dest' columns in event data refer to rows of initialisation data
   #require(plyr)

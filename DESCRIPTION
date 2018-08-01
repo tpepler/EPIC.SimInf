@@ -1,7 +1,7 @@
 Package: EPIC.SimInf
 Type: Package
 Title: EPIC Package for Epidemiological Simulation Modelling using SimInf
-Version: 0.1.10
+Version: 0.1.11
 Date: 2018-08-01
 Author: Theo Pepler
 Maintainer: Theo Pepler <theo.pepler@glasgow.ac.uk>

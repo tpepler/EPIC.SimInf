@@ -35,13 +35,13 @@ prep_cts_init <- function(modeldata
     stop('Please run prep_cts_events() first.')
   }
 
-  cat('Adjusting initialisation data for modelling (this may take a while)...\n')
+  cat('Adjusting initialisation data for modelling (this may take a while)... ')
 
   initdata <- modeldata$init
   eventdata <- modeldata$events
 
-  (mintime <- min(eventdata$time))
-  (maxtime <- max(eventdata$time))
+  mintime <- min(eventdata$time)
+  maxtime <- max(eventdata$time)
   #starttime <- Sys.time()
   #starttime_global <- starttime
   timeseq <- seq(from = mintime, to = maxtime, by = 1)
@@ -54,20 +54,19 @@ prep_cts_init <- function(modeldata
     #print(n_events) # debugging
     if(n_events > 1000){
       checkpoints_1000 <- c(0, seq(from = 1000, to = n_events, by = 1000), n_events)
-    }
-    else {
+    }else{
       checkpoints_1000 <- c(0, n_events)
     }
     #print(checkpoints_1000) # debugging
     #checkpoints_1000 <- c(seq(from = 1740000, to = n_events, by = 1000), n_events) # optional: to start from previous data
     for(i in 2:(length(checkpoints_1000))){
       model <- SimInf::SIR(u0 = day_u0,
-                   events = day_events[1:checkpoints_1000[i], ],
-                   tspan = c(d, d + 1), #seq(from = d, #mintime,
-                               #to = d + 1, #maxtime,
-                               #by = 1),
-                   beta = 0,
-                   gamma = 0)
+                           events = day_events[1:checkpoints_1000[i], ],
+                           tspan = c(d, d + 1), #seq(from = d, #mintime,
+                           #to = d + 1, #maxtime,
+                           #by = 1),
+                           beta = 0,
+                           gamma = 0)
       cc <- try(SimInf::run(model), silent = TRUE)
       if(is(cc,"try-error")){
         checkpoints_100 <- seq(from = checkpoints_1000[i - 1], to = checkpoints_1000[i], by = 100)
