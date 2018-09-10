@@ -54,22 +54,38 @@ tidy_cts_init <- function(modeldata,
   ind <- stringr::str_length(initdata$location_id) > 0
   initdata <- initdata[ind, ]
 
-  if(modeldata$model != 'SIR'){
-    stop('Error: Only SIR model currently implemented.')
+  if(!(modeldata$model %in% c('SIR', 'SLHV'))){
+    stop('Error: Only SIR and SLHV models currently implemented.')
   }
   else{
-    initdata <- data.frame(S = initdata$num_cattle, row.names = initdata$location_id,
-                                     I = rep(0, times = nrow(initdata)),
-                                     R = rep(0, times = nrow(initdata)))
+    if(modeldata$model == 'SIR'){
+      initdata <- data.frame(S = initdata$num_cattle, row.names = initdata$location_id,
+                             I = rep(0, times = nrow(initdata)),
+                             R = rep(0, times = nrow(initdata)))
+    }
+    if(modeldata$model == 'SLHV'){
+      initdata <- data.frame(S = initdata$num_cattle, row.names = initdata$location_id,
+                             L = rep(0, times = nrow(initdata)),
+                             H = rep(0, times = nrow(initdata)),
+                             V = rep(0, times = nrow(initdata)))
+    }
   }
 
   # Add missing nodes to initdata
   temp <- sort(rownames(initdata))
   temp2 <- unique(c(eventdata$node[!(eventdata$node %in% temp)],
                     eventdata$dest[!(eventdata$dest %in% temp)]))
-  temp3 <- data.frame(S = rep(0, times = length(temp2)),
-                      I = rep(0, times = length(temp2)),
-                      R = rep(0, times = length(temp2)))
+  if(modeldata$model == 'SIR'){
+    temp3 <- data.frame(S = rep(0, times = length(temp2)),
+                        I = rep(0, times = length(temp2)),
+                        R = rep(0, times = length(temp2)))
+  }
+  if(modeldata$model == 'SLHV'){
+    temp3 <- data.frame(S = rep(0, times = length(temp2)),
+                        L = rep(0, times = length(temp2)),
+                        H = rep(0, times = length(temp2)),
+                        V = rep(0, times = length(temp2)))
+  }
   rownames(temp3) <- temp2
   initdata <- rbind(initdata, temp3)
   initdata <- initdata[order(as.numeric(rownames(initdata))), ]

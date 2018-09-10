@@ -40,6 +40,13 @@ prep_cts_init <- function(modeldata
   initdata <- modeldata$init
   eventdata <- modeldata$events
 
+  # Temporarily treat SLHV data as SIR
+  if(modeldata$model == 'SLHV'){
+    initdata <- data.frame(S = initdata$S, I = rep(0, nrow(initdata)), R = rep(0, nrow(initdata)))
+    eventdata$select[eventdata$event == 'exit'] <- 4
+    eventdata$select[eventdata$event == 'extTrans'] <- 4
+  }
+
   mintime <- min(eventdata$time)
   maxtime <- max(eventdata$time)
   #starttime <- Sys.time()
@@ -75,12 +82,12 @@ prep_cts_init <- function(modeldata
         }
         for(j in 2:(length(checkpoints_100))){
           model <- SimInf::SIR(u0 = day_u0,
-                       events = day_events[1:checkpoints_100[j], ],
-                       tspan = c(d, d + 1), #seq(from = d, #mintime,
-                                   #to = d + 1, #maxtime,
-                                   #by = 1),
-                       beta = 0,
-                       gamma = 0)
+                               events = day_events[1:checkpoints_100[j], ],
+                               tspan = c(d, d + 1), #seq(from = d, #mintime,
+                               #to = d + 1, #maxtime,
+                               #by = 1),
+                               beta = 0,
+                               gamma = 0)
           cc <- try(SimInf::run(model), silent = TRUE)
           if(is(cc,"try-error")){
             checkpoints_10 <- seq(from = checkpoints_100[j - 1], to = checkpoints_100[j], by = 10)
@@ -89,23 +96,23 @@ prep_cts_init <- function(modeldata
             }
             for(k in 2:(length(checkpoints_10))){
               model <- SimInf::SIR(u0 = day_u0,
-                           events = day_events[1:checkpoints_10[k], ],
-                           tspan = c(d, d + 1), #seq(from = d, #mintime,
-                                       #to = d + 1, #maxtime,
-                                       #by = 1),
-                           beta = 0,
-                           gamma = 0)
+                                   events = day_events[1:checkpoints_10[k], ],
+                                   tspan = c(d, d + 1), #seq(from = d, #mintime,
+                                   #to = d + 1, #maxtime,
+                                   #by = 1),
+                                   beta = 0,
+                                   gamma = 0)
               cc <- try(SimInf::run(model), silent = TRUE)
               if(is(cc,"try-error")){
                 checkpoints_1 <- seq(from = checkpoints_10[k - 1], to = checkpoints_10[k], by = 1)
                 for(h in 2:(length(checkpoints_1))){
                   model <- SimInf::SIR(u0 = day_u0,
-                               events = day_events[1:checkpoints_1[h], ],
-                               tspan = c(d, d + 1), #seq(from = d, #mintime,
-                                           #to = d + 1, #maxtime,
-                                           #by = 1),
-                               beta = 0,
-                               gamma = 0)
+                                       events = day_events[1:checkpoints_1[h], ],
+                                       tspan = c(d, d + 1), #seq(from = d, #mintime,
+                                       #to = d + 1, #maxtime,
+                                       #by = 1),
+                                       beta = 0,
+                                       gamma = 0)
                   cc <- try(SimInf::run(model), silent = TRUE)
                   if(is(cc,"try-error")){
                     #print(day_events[checkpoints_1[h], ])
@@ -123,12 +130,12 @@ prep_cts_init <- function(modeldata
     }
     # Run final model for the current day and adjust day_u0
     model <- SimInf::SIR(u0 = day_u0,
-                 events = day_events,
-                 tspan = c(d, d + 1), #seq(from = d, #mintime,
-                             #to = d + 1, #maxtime,
-                             #by = 1),
-                 beta = 0,
-                 gamma = 0)
+                         events = day_events,
+                         tspan = c(d, d + 1), #seq(from = d, #mintime,
+                         #to = d + 1, #maxtime,
+                         #by = 1),
+                         beta = 0,
+                         gamma = 0)
     #day_u0$S <- SimInf::susceptible(SimInf::run(model))[, 2] # Note: old code; stopped working when 'susceptible' function was replaced by 'trajectory' in SimInf package
     result <- SimInf::trajectory(model = SimInf::run(model),
                                  compartments = 'S',
@@ -141,13 +148,12 @@ prep_cts_init <- function(modeldata
     #                               compartments = 'S',
     #                               i = NULL)[, 2]
   }
-  #cat(paste('Overall time:', Sys.time() - starttime_global, '\n', sep = ''))
 
   cat('done\n')
 
   # Update modeldata object
-  modeldata$init <- initdata
-  modeldata$events <- eventdata
+  modeldata$init$S <- initdata$S
+  #modeldata$events <- eventdata # unnecessary
   modeldata$stepslog['prep_cts_init'] <- TRUE
 
   # # Save adjusted initialisation data data to file on local system

@@ -73,7 +73,12 @@ tidy_cts_events <- function(modeldata,
   eventdata$shift <- rep(0, times = nrow(eventdata))
 
   # Format select column
-  eventdata$select <- rep(4, times = nrow(eventdata)) # 4 = select from any of S, I, or R animals
+  if(modeldata$model == 'SIR'){
+    eventdata$select <- rep(4, times = nrow(eventdata)) # 4 = select from any of S, I, or R animals
+  }
+  if(modeldata$model == 'SLHV'){
+    eventdata$select <- rep(5, times = nrow(eventdata)) # 5 = select from any of S, L, H, or V animals
+  }
   eventdata$select[eventdata$event == 'enter'] <- 1 # 1 = only S animals (i.e. all births/entries go to susceptible category)
 
   # Select only applicable columns

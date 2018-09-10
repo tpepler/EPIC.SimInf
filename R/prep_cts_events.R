@@ -22,16 +22,24 @@ prep_cts_events <- function(modeldata){
   initdata <- modeldata$init
   eventdata <- modeldata$events
 
-  if(modeldata$model != 'SIR'){
-    stop('Error: Only SIR model currently implemented.')
+  if(!(modeldata$model %in% c('SIR', 'SLHV'))){
+    stop('Error: Only SIR and SLHV models currently implemented.')
   }
   else{
     cat('Preparing events data for modelling... ')
-    # Ensure select column has correct values for SIR model
-    eventdata$select[eventdata$event == 'exit'] <- 4
-    eventdata$select[eventdata$event == 'enter'] <- 1
-    #eventdata <- eventdata[eventdata$event != 2, ]
-    eventdata$select[eventdata$event == 'extTrans'] <- 4
+    if(modeldata$model == 'SIR'){
+      # Ensure select column has correct values for SIR model
+      eventdata$select[eventdata$event == 'exit'] <- 4
+      eventdata$select[eventdata$event == 'enter'] <- 1
+      #eventdata <- eventdata[eventdata$event != 2, ]
+      eventdata$select[eventdata$event == 'extTrans'] <- 4
+    }
+    if(modeldata$model == 'SLHV'){
+      # Ensure select column has correct values for SLHV model
+      eventdata$select[eventdata$event == 'exit'] <- 5
+      eventdata$select[eventdata$event == 'enter'] <- 1
+      eventdata$select[eventdata$event == 'extTrans'] <- 5
+    }
   }
 
   # Process entry events on previous day
