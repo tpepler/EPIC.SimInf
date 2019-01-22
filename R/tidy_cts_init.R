@@ -56,8 +56,7 @@ tidy_cts_init <- function(modeldata,
 
   if(!(modeldata$model %in% c('SIR', 'SLHV'))){
     stop('Error: Only SIR and SLHV models currently implemented.')
-  }
-  else{
+  } else {
     if(modeldata$model == 'SIR'){
       initdata <- data.frame(S = initdata$num_cattle, row.names = initdata$location_id,
                              I = rep(0, times = nrow(initdata)),
@@ -73,7 +72,7 @@ tidy_cts_init <- function(modeldata,
 
   # Add missing nodes to initdata
   temp <- sort(rownames(initdata))
-  temp2 <- unique(c(eventdata$node[!(eventdata$node %in% temp)],
+  temp2 <- unique(c(eventdata$node[!(eventdata$node %in% temp)], # list of all nodes in eventdata which are not in initdata
                     eventdata$dest[!(eventdata$dest %in% temp)]))
   if(modeldata$model == 'SIR'){
     temp3 <- data.frame(S = rep(0, times = length(temp2)),
@@ -87,9 +86,9 @@ tidy_cts_init <- function(modeldata,
                         V = rep(0, times = length(temp2)))
   }
   rownames(temp3) <- temp2
-  initdata <- rbind(initdata, temp3)
+  initdata <- rbind(initdata, temp3) # add additional nodes (if any) to initdata set
   initdata <- initdata[order(as.numeric(rownames(initdata))), ]
-  initdata <- initdata[-c(which(as.numeric(rownames(initdata)) == 0)), ] # remove row for node 0
+  initdata <- initdata[!(as.numeric(as.character(rownames(initdata))) == 0), ] # remove row for node 0 (if applicable)
 
   # Update modeldata object
   modeldata$init <- initdata
