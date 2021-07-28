@@ -139,7 +139,7 @@ prep_cts_init <- function(modeldata
     #day_u0$S <- SimInf::susceptible(SimInf::run(model))[, 2] # Note: old code; stopped working when 'susceptible' function was replaced by 'trajectory' in SimInf package
     result <- SimInf::trajectory(model = SimInf::run(model),
                                  compartments = 'S',
-                                 node = NULL)
+                                 index = NULL)
     day_u0$S <- result$S[result$time == d + 1]
     #print(dim(tempout)) # debugging
     #print(head(tempout)) # debugging
