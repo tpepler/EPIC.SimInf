@@ -40,8 +40,8 @@ prep_cts_init <- function(modeldata
   initdata <- modeldata$init
   eventdata <- modeldata$events
 
-  # Temporarily treat SLHV data as SIR
-  if(modeldata$model == 'SLHV'){
+  # Temporarily treat SEIResp/SLHV data as SIR
+  if(modeldata$model %in% c('SEIResp', 'SLHV')){
     initdata <- data.frame(S = initdata$S, I = rep(0, nrow(initdata)), R = rep(0, nrow(initdata)))
     eventdata$select[eventdata$event == 'exit'] <- 4
     eventdata$select[eventdata$event == 'extTrans'] <- 4

@@ -54,11 +54,17 @@ tidy_cts_init <- function(modeldata,
   ind <- stringr::str_length(initdata$location_id) > 0
   initdata <- initdata[ind, ]
 
-  if(!(modeldata$model %in% c('SIR', 'SLHV'))){
-    stop('Error: Only SIR and SLHV models currently implemented.')
+  if(!(modeldata$model %in% c('SIR', 'SEIResp', 'SLHV'))){
+    stop('Error: Only SIR, SEIResp and SLHV models currently implemented.')
   } else {
     if(modeldata$model == 'SIR'){
       initdata <- data.frame(S = initdata$num_cattle, row.names = initdata$location_id,
+                             I = rep(0, times = nrow(initdata)),
+                             R = rep(0, times = nrow(initdata)))
+    }
+    if(modeldata$model == 'SEIResp'){
+      initdata <- data.frame(S = initdata$num_cattle, row.names = initdata$location_id,
+                             E = rep(0, times = nrow(initdata)),
                              I = rep(0, times = nrow(initdata)),
                              R = rep(0, times = nrow(initdata)))
     }
@@ -76,6 +82,12 @@ tidy_cts_init <- function(modeldata,
                     eventdata$dest[!(eventdata$dest %in% temp)]))
   if(modeldata$model == 'SIR'){
     temp3 <- data.frame(S = rep(0, times = length(temp2)),
+                        I = rep(0, times = length(temp2)),
+                        R = rep(0, times = length(temp2)))
+  }
+  if(modeldata$model == 'SEIResp'){
+    temp3 <- data.frame(S = rep(0, times = length(temp2)),
+                        E = rep(0, times = length(temp2)),
                         I = rep(0, times = length(temp2)),
                         R = rep(0, times = length(temp2)))
   }
