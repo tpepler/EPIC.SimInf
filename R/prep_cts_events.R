@@ -22,8 +22,8 @@ prep_cts_events <- function(modeldata){
   initdata <- modeldata$init
   eventdata <- modeldata$events
 
-  if(!(modeldata$model %in% c('SIR', 'SLHV'))){
-    stop('Error: Only SIR and SLHV models currently implemented.')
+  if(!(modeldata$model %in% c('SIR', 'SEIResp', 'SLHV'))){
+    stop('Error: Only SIR, SEIResp and SLHV models currently implemented.')
   }
   else{
     cat('Preparing events data for modelling... ')
@@ -34,8 +34,8 @@ prep_cts_events <- function(modeldata){
       #eventdata <- eventdata[eventdata$event != 2, ]
       eventdata$select[eventdata$event == 'extTrans'] <- 4
     }
-    if(modeldata$model == 'SLHV'){
-      # Ensure select column has correct values for SLHV model
+    if(modeldata$model %in% c('SEIResp', 'SLHV')){
+      # Ensure select column has correct values for SEIResp/SLHV model
       eventdata$select[eventdata$event == 'exit'] <- 5
       eventdata$select[eventdata$event == 'enter'] <- 1
       eventdata$select[eventdata$event == 'extTrans'] <- 5

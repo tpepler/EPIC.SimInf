@@ -76,6 +76,9 @@ tidy_cts_events <- function(modeldata,
   if(modeldata$model == 'SIR'){
     eventdata$select <- rep(4, times = nrow(eventdata)) # 4 = select from any of S, I, or R animals
   }
+  if(modeldata$model == 'SEIResp'){
+    eventdata$select <- rep(5, times = nrow(eventdata)) # 5 = select from any of S, E, I, or R animals
+  }
   if(modeldata$model == 'SLHV'){
     eventdata$select <- rep(5, times = nrow(eventdata)) # 5 = select from any of S, L, H, or V animals
   }
